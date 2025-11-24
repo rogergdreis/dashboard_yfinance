@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yf
+from datetime import datetime
 from datetime import timedelta
 
 # criar as funções de carregamento de dados
@@ -41,10 +42,10 @@ if lista_acoes:
         dados = dados.rename(columns={acao_unica: 'Close'})
 
 # filtro de datas
-if not isinstance(dados.index, pd.DatetimeIndex):
-    dados.index = pd.to_datetime(dados.index)
-data_inicial = dados.index.min().to_pydatetime()
-data_final = dados.index.max().to_pydatetime()
+if not isinstance(data_inicial, datetime):
+    data_inicial = pd.to_datetime(data_inicial).to_pydatetime()
+if not isinstance(data_final, datetime):
+    data_final = pd.to_datetime(data_final).to_pydatetime()
 intervalo_data = st.sidebar.slider('Selecione o período', min_value=data_inicial, max_value=data_final, value=(data_inicial, data_final),step=timedelta(days=1))
 dados = dados.loc[intervalo_data[0]:intervalo_data[1]]   
 
