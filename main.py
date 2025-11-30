@@ -1,15 +1,14 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yf
-from datetime import datetime, timedelta
-
+from datetime import timedelta
 
 # criar as funções de carregamento de dados
     # Cotações
 
 @st.cache_data
 def carregar_dados(empresas):
-    df = yf.download(empresas, start="2010-01-01", end="2025-11-01", interval="1d", group_by="ticker")
+    df = yf.download(empresas, start="2025-01-01", end="2025-11-30", interval="1d", group_by="ticker")
     close = pd.concat({t: df[t]["Close"] for t in empresas}, axis=1)
     close = close.dropna(how="all")
     return close
@@ -42,10 +41,8 @@ if lista_acoes:
         dados = dados.rename(columns={acao_unica: 'Close'})
 
 # filtro de datas
-if not isinstance(data_inicial, datetime):
-    data_inicial = pd.to_datetime(data_inicial).to_pydatetime()
-if not isinstance(data_final, datetime):
-    data_final = pd.to_datetime(data_final).to_pydatetime()
+data_inicial = dados.index.min().to_pydatetime()
+data_final = dados.index.max().to_pydatetime()
 intervalo_data = st.sidebar.slider('Selecione o período', min_value=data_inicial, max_value=data_final, value=(data_inicial, data_final),step=timedelta(days=1))
 dados = dados.loc[intervalo_data[0]:intervalo_data[1]]   
 
